@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>10개의 인물 맞히기 게임</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/3899/3899616.png'), url('https://cdn-icons-png.flaticon.com/512/3899/3899616.png');
+      background-position: left top, right top;
+      background-repeat: no-repeat;
+      background-size: 100px 100%, 100px 100%;
+    }
+
+    img {
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>10개의 인물 맞히기 게임</h1>
+  <p id="timer">남은 시간: 30초</p>
+  <img id="personImage" src="">
+  <select id="personList">
+    <!-- 추가된 인물들 -->
+    <option value="Freddie Mercury">Freddie Mercury</option>
+    <option value="Ed Sheeran">Ed Sheeran</option>
+    <option value="Napoleon">Napoleon</option>
+    <option value="Oliver Shan">Oliver Shan</option>
+    <option value="Cristiano Ronaldo">Cristiano Ronaldo</option>
+    <option value="Lionel Messi">Lionel Messi</option>
+    <option value="Taylor Swift">Taylor Swift</option>
+    <option value="Steve Jobs">Steve Jobs</option>
+    <option value="Albert Einstein">Albert Einstein</option>
+    <option value="Elon Musk">Elon Musk</option>
+  </select>
+  <button onclick="checkAnswer()">제출</button>
+  <p id="result"></p>
+
+  <script>
+    const personImages = {
+      'Freddie Mercury': 'https://i.namu.wiki/i/unBaIP_T7ANPteyERr3aZoW0Q8Gjv4PxkMi-bpUZoFhNwN_hOcIsSc1QnLh5d5uN6SA6zazDUJdlzXvnEG-RNg.webp',
+      'Ed Sheeran': 'https://i.namu.wiki/i/CIvTaz806UW3DmgIQzZT2LZJvNhJK87jxAtcXrEy73KuNF3jLwEi-1jJ-Pt1W-va3XbXiPI8ZqIqKHLFkON-jQ.webp',
+      'Napoleon': 'https://i.namu.wiki/i/gGBSbMs2VVa2JkQqQBMSTU4W4k_KfLol63slrUVj5wBMnWQEus6x8gzoliUl6FVjdyyLZuMKWNThNncdFVgaaQ.webp',
+      'Oliver Shan': 'https://i.namu.wiki/i/zOrRgTrIsGCIIEugmm21qf8zsZyPYQRiyiEGJIv2skRCPB6_0vFLOVketQVMPi1fVGqWtMaRDtdjcuVtlE1rvjqP2FprRcGzn4cVaMPCmQpk7UO469bKQNPsGW3Q8Ele5dpnsTEHnSnzMd8g6NAK5w.webp',
+      'Cristiano Ronaldo': 'https://images.chosun.com/resizer/qa5XMuecYMfWkf0Ke2K9V7zcC5I=/616x0/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/KT2SD5M25BNFXP46AHYTRSK3GA.jpg',
+      'Lionel Messi': 'https://dimg.donga.com/wps/NEWS/IMAGE/2020/09/05/102800493.2.jpg',
+      'Taylor Swift': 'https://image.newsis.com/2023/07/29/NISI20230729_0000380887_web.jpg?rnd=20230803135517',
+      'Steve Jobs': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg/225px-Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg',
+      'Albert Einstein': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Albert_Einstein_Head.jpg/170px-Albert_Einstein_Head.jpg',
+      'Elon Musk': 'https://cdn.imweb.me/upload/S20221129c3c04fdc67a8b/73e390e23ea49.jpeg'
+      // 다른 인물들에 해당하는 이미지 URL을 추가할 수 있습니다
+    };
+
+    const allPersons = Object.keys(personImages);
+    let currentPersons = [];
+    let correctAnswers = 0;
+    let timer;
+    const personImage = document.getElementById('personImage');
+    const personList = document.getElementById('personList');
+    const resultMessage = document.getElementById('result');
+    const timerDisplay = document.getElementById('timer');
+
+    function initializeGame() {
+      startTimer();
+      nextQuestion();
+    }
+
+    function startTimer() {
+      let timeLeft = 30;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `남은 시간: ${timeLeft}초`;
+
+        if (timeLeft === 0 || correctAnswers === 10) {
+          clearInterval(timer);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function getRandomPerson() {
+      const availablePersons = allPersons.filter(person => !currentPersons.includes(person));
+      return availablePersons[Math.floor(Math.random() * availablePersons.length)];
+    }
+
+    function nextQuestion() {
+      if (correctAnswers === 10) {
+        endGame();
+        return;
+      }
+
+      const person = getRandomPerson();
+      currentPersons.push(person);
+      personImage.src = personImages[person];
+      resultMessage.textContent = '';
+      personList.value = '';
+    }
+
+    function checkAnswer() {
+      const selectedPerson = document.getElementById('personList').value;
+
+      if (selectedPerson === currentPersons[currentPersons.length - 1]) {
+        correctAnswers++;
+      }
+
+      nextQuestion();
+    }
+
+    function endGame() {
+      document.body.innerHTML = `<h1>게임 종료!</h1><p>${correctAnswers}개를 맞혔습니다.</p>`;
+    }
+
+    initializeGame();
+  </script>
+</body>
+</html>
